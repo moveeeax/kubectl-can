@@ -1,0 +1,4 @@
+/kubectl-can
+/dist/
+*.test
+*.out

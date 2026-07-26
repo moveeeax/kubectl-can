@@ -1,0 +1,24 @@
+# krew plugin manifest — publish to a krew index to enable `kubectl krew install can`.
+apiVersion: krew.googlecontainertools.github.com/v1alpha2
+kind: Plugin
+metadata:
+  name: can
+spec:
+  version: v0.1.0
+  homepage: https://github.com/moveeeax/kubectl-can
+  shortDescription: Show what the current context can and cannot do
+  description: |
+    Probes the current ServiceAccount/context permissions via
+    SelfSubjectAccessReview and prints, grouped by resource, which verbs are
+    allowed and denied. Supports namespace scoping and --as impersonation.
+  platforms:
+    - selector:
+        matchLabels:
+          os: linux
+          arch: amd64
+      uri: https://github.com/moveeeax/kubectl-can/releases/download/v0.1.0/kubectl-can_linux_amd64.tar.gz
+      sha256: "REPLACE_WITH_RELEASE_ASSET_SHA256"
+      bin: kubectl-can
+      files:
+        - from: kubectl-can
+          to: .
