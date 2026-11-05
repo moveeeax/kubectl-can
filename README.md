@@ -48,12 +48,14 @@ was added. Unpack the archive and put `kubectl-can` on your `PATH`.
 
 ### krew
 
-`kubectl krew install can` does not work yet. The plugin is not in the krew index,
-and the [krew manifest](examples/can.yaml) still carries placeholder sha256 values.
-It becomes usable once a release with binaries exists, the manifest is filled in
-from that release's `checksums.txt`, and it is submitted to the index. Until then you
-can install from the filled-in manifest locally with
-`kubectl krew install --manifest=examples/can.yaml`.
+The plugin is not in the krew index yet, so `kubectl krew install can` does not work.
+The [krew manifest](examples/can.yaml) is filled in for v0.2.0, so you can install from it directly:
+
+```sh
+kubectl krew install --manifest-url=https://raw.githubusercontent.com/moveeeax/kubectl-can/main/examples/can.yaml
+```
+
+Release binaries for linux, darwin and windows are on the [releases page](https://github.com/moveeeax/kubectl-can/releases).
 
 ## Usage
 

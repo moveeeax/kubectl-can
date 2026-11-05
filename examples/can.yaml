@@ -1,13 +1,9 @@
 # krew plugin manifest for `kubectl krew install can`.
 #
-# NOT READY TO PUBLISH YET. The sha256 values below are placeholders.
-# After the release workflow (.github/workflows/release.yml) has published the
-# v0.2.0 release, replace every "REPLACE_WITH_SHA256_OF_<asset>" with the matching
-# line from that release's checksums.txt:
+# sha256 values come from the v0.2.0 release's checksums.txt. For a new release,
+# update spec.version, every uri and every sha256 from that release:
 #
-#   gh release download v0.2.0 -R moveeeax/kubectl-can -p checksums.txt -O -
-#
-# If you release under a different tag, update spec.version and every uri too.
+#   gh release download <tag> -R moveeeax/kubectl-can -p checksums.txt -O -
 apiVersion: krew.googlecontainertools.github.com/v1alpha2
 kind: Plugin
 metadata:
@@ -26,7 +22,7 @@ spec:
           os: linux
           arch: amd64
       uri: https://github.com/moveeeax/kubectl-can/releases/download/v0.2.0/kubectl-can_linux_amd64.tar.gz
-      sha256: "REPLACE_WITH_SHA256_OF_kubectl-can_linux_amd64.tar.gz"
+      sha256: "d9c42cc93339665b53f39492573f6691d47f3f9f155bc666e2f414e200c47d97"
       bin: kubectl-can
       files:
         - from: kubectl-can
@@ -38,7 +34,7 @@ spec:
           os: linux
           arch: arm64
       uri: https://github.com/moveeeax/kubectl-can/releases/download/v0.2.0/kubectl-can_linux_arm64.tar.gz
-      sha256: "REPLACE_WITH_SHA256_OF_kubectl-can_linux_arm64.tar.gz"
+      sha256: "c844f7dbdeb410678ec7a4aba2035e30423bae9b82f7904bd4548ef42f50052a"
       bin: kubectl-can
       files:
         - from: kubectl-can
@@ -50,7 +46,7 @@ spec:
           os: darwin
           arch: amd64
       uri: https://github.com/moveeeax/kubectl-can/releases/download/v0.2.0/kubectl-can_darwin_amd64.tar.gz
-      sha256: "REPLACE_WITH_SHA256_OF_kubectl-can_darwin_amd64.tar.gz"
+      sha256: "fd513b14fcb3b7d7604e408f8581e7c37cb0b3f6bdb969a0808d5ae526604b1e"
       bin: kubectl-can
       files:
         - from: kubectl-can
@@ -62,7 +58,7 @@ spec:
           os: darwin
           arch: arm64
       uri: https://github.com/moveeeax/kubectl-can/releases/download/v0.2.0/kubectl-can_darwin_arm64.tar.gz
-      sha256: "REPLACE_WITH_SHA256_OF_kubectl-can_darwin_arm64.tar.gz"
+      sha256: "844c9ef601affe5a10d039612710f511a2a0a03404af50d327712414dbb66879"
       bin: kubectl-can
       files:
         - from: kubectl-can
@@ -74,7 +70,7 @@ spec:
           os: windows
           arch: amd64
       uri: https://github.com/moveeeax/kubectl-can/releases/download/v0.2.0/kubectl-can_windows_amd64.zip
-      sha256: "REPLACE_WITH_SHA256_OF_kubectl-can_windows_amd64.zip"
+      sha256: "df28b7282dddfbd9d179f4ab0ad4e23889a31cc1218ae48b98778271ff0ec5f6"
       bin: kubectl-can.exe
       files:
         - from: kubectl-can.exe
