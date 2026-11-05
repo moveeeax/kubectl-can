@@ -1,10 +1,19 @@
-# krew plugin manifest — publish to a krew index to enable `kubectl krew install can`.
+# krew plugin manifest for `kubectl krew install can`.
+#
+# NOT READY TO PUBLISH YET. The sha256 values below are placeholders.
+# After the release workflow (.github/workflows/release.yml) has published the
+# v0.2.0 release, replace every "REPLACE_WITH_SHA256_OF_<asset>" with the matching
+# line from that release's checksums.txt:
+#
+#   gh release download v0.2.0 -R moveeeax/kubectl-can -p checksums.txt -O -
+#
+# If you release under a different tag, update spec.version and every uri too.
 apiVersion: krew.googlecontainertools.github.com/v1alpha2
 kind: Plugin
 metadata:
   name: can
 spec:
-  version: v0.1.0
+  version: v0.2.0
   homepage: https://github.com/moveeeax/kubectl-can
   shortDescription: Show what the current context can and cannot do
   description: |
@@ -16,9 +25,59 @@ spec:
         matchLabels:
           os: linux
           arch: amd64
-      uri: https://github.com/moveeeax/kubectl-can/releases/download/v0.1.0/kubectl-can_linux_amd64.tar.gz
-      sha256: "REPLACE_WITH_RELEASE_ASSET_SHA256"
+      uri: https://github.com/moveeeax/kubectl-can/releases/download/v0.2.0/kubectl-can_linux_amd64.tar.gz
+      sha256: "REPLACE_WITH_SHA256_OF_kubectl-can_linux_amd64.tar.gz"
       bin: kubectl-can
       files:
         - from: kubectl-can
+          to: .
+        - from: LICENSE
+          to: .
+    - selector:
+        matchLabels:
+          os: linux
+          arch: arm64
+      uri: https://github.com/moveeeax/kubectl-can/releases/download/v0.2.0/kubectl-can_linux_arm64.tar.gz
+      sha256: "REPLACE_WITH_SHA256_OF_kubectl-can_linux_arm64.tar.gz"
+      bin: kubectl-can
+      files:
+        - from: kubectl-can
+          to: .
+        - from: LICENSE
+          to: .
+    - selector:
+        matchLabels:
+          os: darwin
+          arch: amd64
+      uri: https://github.com/moveeeax/kubectl-can/releases/download/v0.2.0/kubectl-can_darwin_amd64.tar.gz
+      sha256: "REPLACE_WITH_SHA256_OF_kubectl-can_darwin_amd64.tar.gz"
+      bin: kubectl-can
+      files:
+        - from: kubectl-can
+          to: .
+        - from: LICENSE
+          to: .
+    - selector:
+        matchLabels:
+          os: darwin
+          arch: arm64
+      uri: https://github.com/moveeeax/kubectl-can/releases/download/v0.2.0/kubectl-can_darwin_arm64.tar.gz
+      sha256: "REPLACE_WITH_SHA256_OF_kubectl-can_darwin_arm64.tar.gz"
+      bin: kubectl-can
+      files:
+        - from: kubectl-can
+          to: .
+        - from: LICENSE
+          to: .
+    - selector:
+        matchLabels:
+          os: windows
+          arch: amd64
+      uri: https://github.com/moveeeax/kubectl-can/releases/download/v0.2.0/kubectl-can_windows_amd64.zip
+      sha256: "REPLACE_WITH_SHA256_OF_kubectl-can_windows_amd64.zip"
+      bin: kubectl-can.exe
+      files:
+        - from: kubectl-can.exe
+          to: .
+        - from: LICENSE
           to: .

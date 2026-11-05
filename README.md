@@ -1,7 +1,7 @@
 # kubectl-can
 
 [![ci](https://github.com/moveeeax/kubectl-can/actions/workflows/ci.yml/badge.svg)](https://github.com/moveeeax/kubectl-can/actions/workflows/ci.yml)
-[![go](https://img.shields.io/badge/go-1.22%2B-00ADD8)](https://go.dev)
+[![go](https://img.shields.io/badge/go-1.26%2B-00ADD8)](https://go.dev)
 [![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 > Instantly see what your current Kubernetes context can and cannot do.
@@ -14,11 +14,18 @@ you: it probes a matrix of verbs against common resources with
 denied side by side.
 
 ```console
-$ kubectl can --namespace prod
-pods                     ✔ get  ✔ list  ✔ watch  ✗ create  ✗ delete
-secrets                  ✗ get  ✗ list  ✗ watch  ✗ create  ✗ delete
-deployments              ✔ get  ✔ list  ✔ watch  ✔ create  ✗ delete
+$ kubectl can --namespace prod --resource pods,secrets,deployments
+deployments              ✔ get  ✔ list  ✔ watch  ✔ create  ✔ update  ✔ patch  ✗ delete  ✗ deletecollection
+pods                     ✔ get  ✔ list  ✔ watch  ✗ create  ✗ update  ✗ patch  ✗ delete  ✗ deletecollection
+secrets                  ✗ get  ✗ list  ✗ watch  ✗ create  ✗ update  ✗ patch  ✗ delete  ✗ deletecollection
 ```
+
+Without `--resource` it probes all 19 default resources (pods, services, configmaps,
+secrets, persistentvolumeclaims, serviceaccounts, events, namespaces, nodes,
+deployments, statefulsets, daemonsets, replicasets, jobs, cronjobs, ingresses,
+networkpolicies, roles, rolebindings) with all 8 default verbs (get, list, watch,
+create, update, patch, delete, deletecollection). Resources are printed in
+alphabetical order.
 
 ## What it does
 
@@ -34,13 +41,25 @@ go install github.com/moveeeax/kubectl-can@latest
 # invoked as either `kubectl-can` or, on your PATH, `kubectl can`
 ```
 
-A [krew manifest](examples/can.yaml) is included so it can be published as
-`kubectl krew install can`.
+Prebuilt archives for linux/darwin (amd64, arm64) and windows (amd64) are attached
+to each [GitHub release](https://github.com/moveeeax/kubectl-can/releases) together
+with `checksums.txt`, starting from the first release cut after the release workflow
+was added. Unpack the archive and put `kubectl-can` on your `PATH`.
+
+### krew
+
+`kubectl krew install can` does not work yet. The plugin is not in the krew index,
+and the [krew manifest](examples/can.yaml) still carries placeholder sha256 values.
+It becomes usable once a release with binaries exists, the manifest is filled in
+from that release's `checksums.txt`, and it is submitted to the index. Until then you
+can install from the filled-in manifest locally with
+`kubectl krew install --manifest=examples/can.yaml`.
 
 ## Usage
 
 | Flag | Description |
 |------|-------------|
+| `--kubeconfig` | Path to a kubeconfig file. Without it the standard loading rules apply: `$KUBECONFIG`, then `~/.kube/config`. The current context of that file is used |
 | `-n`, `--namespace` | Namespace to check (empty = cluster scope) |
 | `--as` | Impersonate a user |
 | `--as-group` | Impersonate a group (repeatable) |

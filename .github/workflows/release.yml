@@ -1,0 +1,49 @@
+name: release
+on:
+  push:
+    tags: ["v*.*.*"]
+permissions:
+  contents: read
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+      - name: Test
+        run: go test ./...
+      - name: Build archives
+        env:
+          CGO_ENABLED: "0"
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          for target in linux/amd64 linux/arm64 darwin/amd64 darwin/arm64 windows/amd64; do
+            os="${target%/*}"
+            arch="${target#*/}"
+            name="kubectl-can_${os}_${arch}"
+            work="build/${name}"
+            mkdir -p "${work}"
+            bin="kubectl-can"
+            if [ "${os}" = "windows" ]; then bin="kubectl-can.exe"; fi
+            GOOS="${os}" GOARCH="${arch}" go build -trimpath -ldflags "-s -w" -o "${work}/${bin}" .
+            cp LICENSE README.md "${work}/"
+            if [ "${os}" = "windows" ]; then
+              (cd "${work}" && zip -q "../../dist/${name}.zip" "${bin}" LICENSE README.md)
+            else
+              tar -C "${work}" -czf "dist/${name}.tar.gz" "${bin}" LICENSE README.md
+            fi
+          done
+          (cd dist && sha256sum * > checksums.txt && cat checksums.txt)
+      - uses: softprops/action-gh-release@v3
+        with:
+          files: |
+            dist/*.tar.gz
+            dist/*.zip
+            dist/checksums.txt
+          fail_on_unmatched_files: true
+          generate_release_notes: true
