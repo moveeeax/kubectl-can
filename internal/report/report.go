@@ -12,20 +12,45 @@ import (
 )
 
 // Grouped writes results grouped by resource, one line per resource listing the
-// allowed verbs (✔) and denied verbs (✗).
-func Grouped(w io.Writer, results []probe.Result, color bool) {
-	byRes := map[string][]probe.Result{}
-	var order []string
+// allowed verbs (✔) and denied verbs (✗). With qualify, resources outside the
+// core group are labeled kubectl-style ("deployments.apps"); without it they are
+// labeled by plain name unless two groups serve the same name, in which case
+// both are qualified so they are not merged into one line.
+func Grouped(w io.Writer, results []probe.Result, color, qualify bool) {
+	type key struct{ name, group string }
+	byRes := map[key][]probe.Result{}
+	groupsOf := map[string]map[string]bool{}
+	var order []key
 	for _, r := range results {
-		if _, ok := byRes[r.Resource]; !ok {
-			order = append(order, r.Resource)
+		k := key{r.Resource, r.Group}
+		if _, ok := byRes[k]; !ok {
+			order = append(order, k)
 		}
-		byRes[r.Resource] = append(byRes[r.Resource], r)
+		byRes[k] = append(byRes[k], r)
+		if groupsOf[r.Resource] == nil {
+			groupsOf[r.Resource] = map[string]bool{}
+		}
+		groupsOf[r.Resource][r.Group] = true
 	}
-	sort.Strings(order)
-	for _, res := range order {
+	labels := map[key]string{}
+	width := 24
+	for _, k := range order {
+		label := k.name
+		if qualify || len(groupsOf[k.name]) > 1 {
+			label = probe.Resource{Name: k.name, Group: k.group}.Qualified()
+		}
+		labels[k] = label
+		width = max(width, len(label))
+	}
+	sort.Slice(order, func(i, j int) bool {
+		if labels[order[i]] != labels[order[j]] {
+			return labels[order[i]] < labels[order[j]]
+		}
+		return order[i].group < order[j].group
+	})
+	for _, k := range order {
 		var parts []string
-		for _, r := range byRes[res] {
+		for _, r := range byRes[k] {
 			mark := "✗ " + r.Verb
 			if r.Allowed {
 				mark = "✔ " + r.Verb
@@ -39,7 +64,7 @@ func Grouped(w io.Writer, results []probe.Result, color bool) {
 			}
 			parts = append(parts, mark)
 		}
-		fmt.Fprintf(w, "%-24s %s\n", res, strings.Join(parts, "  "))
+		fmt.Fprintf(w, "%-*s %s\n", width, labels[k], strings.Join(parts, "  "))
 	}
 }
 
